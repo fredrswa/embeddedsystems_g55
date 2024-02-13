@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <time.h>
+#include <vector>
 #include "driver/elevio.h"
 
 
@@ -15,6 +16,47 @@ int main(){
     elevio_motorDirection(DIRN_UP);
 
     while(1){
+        //Variables
+        int floor_call;
+        int floor_current;
+
+        //Tilstandsvektor
+        int door_status;
+        int floor_indicator;
+        int floor_above;
+        int floor_below;
+        int floor_level;
+        int floorbutton_up;
+        int floorbutton_down;
+        /*
+        vector<int> stat_vector = 
+        (
+            door_status;
+            floor_indicator;
+            floor_above;
+            floor_below;
+            floor_level;
+            floorbutton_up;
+            floorbutton_down;
+        );
+        */
+        //Matriser(Betingelse/maske)
+
+
+
+        //Matrise -> Regel
+
+
+
+        //Regel switch-case
+
+
+
+        //Annet -> køsystem
+
+
+
+
         int floor = elevio_floorSensor();
 
         if(floor == 0){
