@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <time.h>
-#include <vector>
 #include "driver/elevio.h"
 
 
@@ -28,18 +27,19 @@ int main(){
         int floor_level;
         int floorbutton_up;
         int floorbutton_down;
-        /*
-        vector<int> stat_vector = 
-        (
-            door_status;
-            floor_indicator;
-            floor_above;
-            floor_below;
-            floor_level;
-            floorbutton_up;
-            floorbutton_down;
-        );
-        */
+
+        int stat_array[7] = 
+        {
+            door_status,
+            floor_indicator,
+            floor_above,
+            floor_below,
+            floor_level,
+            floorbutton_up,
+            floorbutton_down,
+        };
+
+
         //Matriser(Betingelse/maske)
 
 
