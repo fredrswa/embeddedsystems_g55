@@ -32,3 +32,7 @@ int elevio_floorSensor(void);
 int elevio_stopButton(void);
 int elevio_obstruction(void);
 
+
+//Created for project
+
+void go_to_floor(int current_floor, int new_floor);
