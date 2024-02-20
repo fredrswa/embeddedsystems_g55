@@ -127,3 +127,34 @@ int elevio_obstruction(void){
     pthread_mutex_unlock(&sockmtx);
     return buf[1];
 }
+
+
+//Created for project
+
+void go_to_floor(int current_floor, int new_floor) 
+{   
+    while(1){
+        if(current_floor > new_floor) {
+
+            elevio_motorDirection(DIRN_DOWN);
+        }
+        if(current_floor < new_floor)
+        {
+            elevio_motorDirection(DIRN_UP);
+        }
+        if(current_floor == new_floor) {
+        }
+        if(elevio_floorSensor() == new_floor) {
+            elevio_motorDirection(DIRN_STOP);
+            break;
+        }
+
+
+        if(elevio_stopButton()){
+            elevio_motorDirection(DIRN_STOP);
+            break;
+        }
+        
+    }
+
+}

@@ -9,60 +9,62 @@
 int main(){
     elevio_init();
     
-    printf("=== Example Program ===\n");
     printf("Press the stop button on the elevator panel to exit\n");
 
-    elevio_motorDirection(DIRN_UP);
-
     while(1){
-        //Variables
-        int floor_call;
-        int floor_current;
-
-        //Tilstandsvektor
-        int door_status;
-        int floor_indicator;
-        int floor_above;
-        int floor_below;
-        int floor_level;
-        int floorbutton_up;
-        int floorbutton_down;
-
-        int stat_array[7] = 
-        {
-            door_status,
-            floor_indicator,
-            floor_above,
-            floor_below,
-            floor_level,
-            floorbutton_up,
-            floorbutton_down,
-        };
-
-
-        //Matriser(Betingelse/maske)
-
-
-
-        //Matrise -> Regel
-
-
-
-        //Regel switch-case
-
-
-
-        //Annet -> køsystem
-
-
-
-
+        //Changing variables
         int floor = elevio_floorSensor();
 
-        if(floor == 0){
-            elevio_motorDirection(DIRN_UP);
-        }
 
+        //STARTUP PROCEDURE
+        /*
+        if(floor == -1) {
+            elevio_motorDirection(DIRN_DOWN);
+        } else {
+            elevio_motorDirection(DIRN_STOP);
+            elevio_floorIndicator(floor);
+        }
+        */
+        int current_call = elevio_callButton(3,1);
+        printf("%d", current_call);
+
+        go_to_floor(floor,1);
+        floor = elevio_floorSensor();
+        go_to_floor(floor,3);
+        floor = elevio_floorSensor();
+        go_to_floor(floor,0);
+        floor = elevio_floorSensor();
+        go_to_floor(floor,2);
+        floor = elevio_floorSensor();
+        go_to_floor(floor,3);
+        floor = elevio_floorSensor();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*
+        int floor = elevio_floorSensor();
+
+        elevio_buttonLamp(floor,1 ,1);        int floor = elevio_floorSensor();
         if(floor == N_FLOORS-1){
             elevio_motorDirection(DIRN_DOWN);
         }
@@ -85,7 +87,13 @@ int main(){
             elevio_motorDirection(DIRN_STOP);
             break;
         }
-        
+        */
+        if(elevio_stopButton()){
+            elevio_motorDirection(DIRN_STOP);
+            break;
+        }
+
+
         nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
     }
 
