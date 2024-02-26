@@ -35,4 +35,7 @@ int elevio_obstruction(void);
 
 //Created for project
 
-void go_to_floor(int current_floor, int new_floor);
+void go_to_floor(int new_floor);
+void open_door();
+int between_floors();
+void startup();

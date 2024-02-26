@@ -131,9 +131,15 @@ int elevio_obstruction(void){
 
 //Created for project
 
-void go_to_floor(int current_floor, int new_floor) 
+void go_to_floor(int new_floor) 
 {   
+    int current_floor = elevio_floorSensor();
     while(1){
+        int current_floor1 = elevio_floorSensor();
+        if(current_floor1 != -1){
+            current_floor = current_floor1;
+            elevio_floorIndicator(current_floor);
+        }
         if(current_floor > new_floor) {
 
             elevio_motorDirection(DIRN_DOWN);
@@ -143,11 +149,12 @@ void go_to_floor(int current_floor, int new_floor)
             elevio_motorDirection(DIRN_UP);
         }
         if(current_floor == new_floor) {
-        }
-        if(elevio_floorSensor() == new_floor) {
             elevio_motorDirection(DIRN_STOP);
+            open_door();
             break;
+
         }
+        
 
 
         if(elevio_stopButton()){
@@ -157,4 +164,38 @@ void go_to_floor(int current_floor, int new_floor)
         
     }
 
+}
+void open_door(){
+    if(between_floors()){
+        printf("The elevator is unable to open the dor in this state");
+    }else{
+        elevio_doorOpenLamp(1);
+        usleep(3000000);
+        while(elevio_obstruction()){
+            usleep(1000000);
+
+        }
+        elevio_doorOpenLamp(0);
+    }
+}
+int between_floors(){
+    int floor = elevio_floorSensor();
+    if(floor==-1){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+void startup(){
+        int floor = elevio_floorSensor();
+	int i = 1;
+	while(i){
+    if(floor == -1) {
+            elevio_motorDirection(DIRN_DOWN);
+        }else{
+        elevio_motorDirection(DIRN_STOP);
+        elevio_floorIndicator(floor);
+	i=0;
+}
+}
 }
