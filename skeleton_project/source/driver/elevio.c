@@ -131,7 +131,7 @@ int elevio_obstruction(void){
 
 //Created for project
 
-void go_to_floor(int new_floor) 
+void go_to_floor(int new_floor, int kø[]) 
 {   
     int current_floor = elevio_floorSensor();
     while(1){
@@ -139,21 +139,24 @@ void go_to_floor(int new_floor)
         if(current_floor1 != -1){
             current_floor = current_floor1;
             elevio_floorIndicator(current_floor);
+
         }
         if(current_floor > new_floor) {
 
             elevio_motorDirection(DIRN_DOWN);
-        }
-        if(current_floor < new_floor)
+        }else if(current_floor < new_floor)
         {
             elevio_motorDirection(DIRN_UP);
         }
         if(current_floor == new_floor) {
             elevio_motorDirection(DIRN_STOP);
-            open_door();
+            open_door(kø);
+            kø_add_if_pressed(kø);
+            kø_del_when_completed(new_floor,kø);
             break;
 
         }
+        kø_add_if_pressed(kø);
         
 
 
@@ -165,14 +168,21 @@ void go_to_floor(int new_floor)
     }
 
 }
-void open_door(){
+void open_door(int kø[]){
     if(between_floors()){
         printf("The elevator is unable to open the dor in this state");
     }else{
         elevio_doorOpenLamp(1);
-        usleep(3000000);
+        int i = 0;
+        for(int i = 0; i < 200; i++){
+        kø_add_if_pressed(kø);
+        usleep(10000);
+        }
         while(elevio_obstruction()){
-            usleep(1000000);
+            for(int i = 0; i < 50; i++){
+        kø_add_if_pressed(kø);
+        usleep(10000);
+        }
 
         }
         elevio_doorOpenLamp(0);
@@ -187,15 +197,53 @@ int between_floors(){
     }
 }
 void startup(){
-        int floor = elevio_floorSensor();
-	int i = 1;
-	while(i){
+    
+	
+	while(1){
+    int floor = elevio_floorSensor();
     if(floor == -1) {
             elevio_motorDirection(DIRN_DOWN);
         }else{
         elevio_motorDirection(DIRN_STOP);
         elevio_floorIndicator(floor);
-	i=0;
+	    break;
 }
 }
+}
+
+int is_kø_empty(int kø[]){
+    for(int i = 0; i < 4; i++){
+        if(kø[i]==1){
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void kø_add_if_pressed(int kø[]){
+    
+    if(elevio_callButton(0, 0) || elevio_callButton(0, 1) || elevio_callButton(0, 2)){
+        kø[0]=1;
+    }
+    if(elevio_callButton(1, 0) || elevio_callButton(1, 1) || elevio_callButton(1, 2)){
+        kø[1]=1;
+    }
+    if(elevio_callButton(2, 0) || elevio_callButton(2, 1) || elevio_callButton(2, 2)){
+        kø[2]=1;
+    }
+    if(elevio_callButton(3, 0) || elevio_callButton(3, 1) || elevio_callButton(3, 2)){
+        kø[3]=1;
+    }
+}
+int kø_manager(int kø[]){
+    for(int i = 0; i < 4; i++){
+        kø_add_if_pressed(kø);
+        if(kø[i]==1){
+            return i;
+        }
+    }
+    return -1;
+}
+void kø_del_when_completed(int floor ,int kø[]){
+    kø[floor]=0;
 }

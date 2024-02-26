@@ -35,7 +35,12 @@ int elevio_obstruction(void);
 
 //Created for project
 
-void go_to_floor(int new_floor);
-void open_door();
+void go_to_floor(int new_floor, int kø[]);
+void open_door(int kø[]);
 int between_floors();
 void startup();
+int is_kø_empty(int kø[]);
+void kø_add_if_pressed(int kø[]);
+int kø_manager(int kø[]);
+void kø_del_when_completed(int floor, int kø[]);
+

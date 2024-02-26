@@ -10,17 +10,22 @@ int main(){
     elevio_init();
 	 printf("Pre-startup");
     printf("Press the stop button on the elevator panel to exit\n");
-    
 
+    int current_kø[4];
+    startup();
 while(1){
-	startup();
-       	    go_to_floor(0);
-	    go_to_floor(3);
-	    go_to_floor(0);
-	    go_to_floor(3);
-
+    kø_add_if_pressed(current_kø);
+     printf("Etter kø_add_if_pressed \n ");
+    int next_floor = kø_manager(current_kø);
+    printf("Etter kø_manager \n ");
+    if(next_floor!=-1){
+        go_to_floor(next_floor, current_kø);
+        printf("Etter go to floor \n ");
+    }
+            
         if(elevio_stopButton()){
             elevio_motorDirection(DIRN_STOP);
+            
             break;
         }
 
