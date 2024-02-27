@@ -131,26 +131,42 @@ int elevio_obstruction(void){
 
 //Created for project
 
-void go_to_floor(int new_floor, int kø[]) 
+int go_to_floor(int new_floor, int kø[]) 
 {   
     int current_floor = elevio_floorSensor();
+    int super_stop = 0;
+    int floor_mem = 0;
+    int motor_dir = 0;
+    int if_stop = 0;
+    int current_floor1 = -1;
     while(1){
-        int current_floor1 = elevio_floorSensor();
+        if (elevio_stopButton())
+        {
+            return 1;
+        }
+        if(!if_stop){int current_floor1 = elevio_floorSensor();
+        }
         if(current_floor1 != -1){
+            floor_mem = current_floor1;
             current_floor = current_floor1;
             elevio_floorIndicator(current_floor);
 
         }
         if(current_floor > new_floor) {
-
+            motor_dir = -1;
             elevio_motorDirection(DIRN_DOWN);
         }else if(current_floor < new_floor)
         {
+            motor_dir = 1;
             elevio_motorDirection(DIRN_UP);
         }
         if(current_floor == new_floor) {
             elevio_motorDirection(DIRN_STOP);
-            open_door(kø);
+        if (elevio_stopButton())
+        {
+            return 1;
+        }
+            super_stop = open_door(kø);
             kø_add_if_pressed(kø);
             kø_del_when_completed(new_floor,kø);
             break;
@@ -161,32 +177,47 @@ void go_to_floor(int new_floor, int kø[])
 
 
         if(elevio_stopButton()){
-            elevio_motorDirection(DIRN_STOP);
+            emergency_stop(kø);
+            super_stop = 1;
             break;
+            //start_from_undefined(floor_mem, motor_dir);
+
         }
         
     }
+    return super_stop;
 
 }
-void open_door(int kø[]){
+
+int open_door(int kø[]){
+    if (elevio_stopButton()) {
+        return 1;
+    }
     if(between_floors()){
         printf("The elevator is unable to open the dor in this state");
     }else{
         elevio_doorOpenLamp(1);
         int i = 0;
-        for(int i = 0; i < 100; i++){
+        for(int i = 0; i < 200; i++){
         kø_add_if_pressed(kø);
+        if (elevio_stopButton()) {
+            return 1;
+        }
         usleep(10000);
         }
         while(elevio_obstruction()){
             for(int i = 0; i < 50; i++){
         kø_add_if_pressed(kø);
+        if (elevio_stopButton()) {
+            return 1;
+        }
         usleep(10000);
         }
 
         }
         elevio_doorOpenLamp(0);
     }
+    return 0;
 }
 int between_floors(){
     int floor = elevio_floorSensor();
@@ -262,14 +293,29 @@ void kø_add_if_pressed(int kø[]){
             elevio_buttonLamp(3, 2, 1);}
     }
 }
-int kø_manager(int kø[]){
+int kø_manager(int kø[], int pri[]){
+    int call = 0;
+    int b = 0;
     for(int i = 0; i < 4; i++){
         kø_add_if_pressed(kø);
-        if(kø[i]==1){
-            return i;
+        b+=kø[i];
+        if((kø[i] &&  pri[i] > pri[call])){
+            call = i;
         }
     }
-    return -1;
+
+    for(int i = 0; i < 4; i++) {
+        if (kø[i]) {
+            pri[i]++;
+        }
+    }
+
+    pri[call] = 0;
+
+    if(!b || (kø[call] == 0)){
+        return -1;
+    }
+    return call;
 }
 void kø_del_when_completed(int floor ,int kø[]){
     kø[floor]=0;
@@ -290,4 +336,42 @@ void kø_del_when_completed(int floor ,int kø[]){
         elevio_buttonLamp(3, 1, 0);
         elevio_buttonLamp(3, 2, 0);
     }
+}
+int emergency_stop(int kø[]) {
+    elevio_motorDirection(DIRN_STOP);
+    elevio_stopLamp(1);
+    
+    int i = 0;
+    int super_stop = 0;
+    if (elevio_floorSensor() != -1) {
+        elevio_doorOpenLamp(1);
+    }
+    while(elevio_stopButton())
+    { 
+        
+        usleep(10000);
+        i++;
+        if (i == 500) {
+            super_stop = 1;
+            break;
+        }
+              
+    }
+    elevio_stopLamp(0);      
+    if (elevio_floorSensor() > -1)
+    {
+        elevio_doorOpenLamp(1);
+        usleep(3000000);     
+        while(elevio_obstruction()) {
+            usleep(1000);
+        }
+        elevio_doorOpenLamp(0);
+    } else {
+        usleep(2000000);
+    }
+    for (int floor = 0; floor < 4; floor++) {
+        kø_del_when_completed(floor, kø);
+    }
+    
+    return super_stop;
 }

@@ -8,30 +8,46 @@
 
 int main(){
     elevio_init();
-	 printf("Pre-startup");
+	printf("Pre-startup\n");
     printf("Press the stop button on the elevator panel to exit\n");
 
-    int current_kø[4];
-    startup();
+ 
+
 while(1){
+    int current_kø[4] = {0,0,0,0};
+    int priority[4] = {0,0,0,0};
+    startup();
+    int stop =0;
+    int super_stop = 0;
     
-    kø_add_if_pressed(current_kø);
+    while(1) 
+    {
+        kø_add_if_pressed(current_kø);
+        int next_floor = kø_manager(current_kø, priority);
     
-    int next_floor = kø_manager(current_kø);
+        
+        
+        if(next_floor!=-1){
+        stop = go_to_floor(next_floor, current_kø);
+        }
+
     
-    if(next_floor!=-1){
-        go_to_floor(next_floor, current_kø);
-    }
-            
-        if(elevio_stopButton()){
-            elevio_motorDirection(DIRN_STOP);
-            break;
+
+        if(elevio_stopButton() || stop)
+        {
+            super_stop = emergency_stop(current_kø);
         }
 
 
-        nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
+            nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
     }
 
+
+    if(super_stop == 1) {
+        printf("Application ended");
+        break;
+    }
+    }   
     return 0;
 }
 

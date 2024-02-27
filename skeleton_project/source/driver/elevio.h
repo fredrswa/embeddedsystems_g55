@@ -18,6 +18,8 @@ typedef enum {
     BUTTON_CAB          = 2
 } ButtonType;
 
+#define m_second 1000
+
 
 void elevio_init(void);
 
@@ -35,12 +37,11 @@ int elevio_obstruction(void);
 
 //Created for project
 
-void go_to_floor(int new_floor, int kø[]);
-void open_door(int kø[]);
+int go_to_floor(int new_floor, int kø[]);
+int open_door(int kø[]);
 int between_floors();
 void startup();
-int is_kø_empty(int kø[]);
-void kø_add_if_pressed(int kø[]);
-int kø_manager(int kø[]);
-void kø_del_when_completed(int floor, int kø[]);
+int is_kø_empty(int kø[]);int current_floor1int kø[]);
+int emergency_stop(int kø[]);
+//void start_from_undefined(int floor, int direction);
 
