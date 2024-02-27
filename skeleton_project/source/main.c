@@ -14,18 +14,17 @@ int main(){
     int current_kø[4];
     startup();
 while(1){
+    
     kø_add_if_pressed(current_kø);
-     printf("Etter kø_add_if_pressed \n ");
+    
     int next_floor = kø_manager(current_kø);
-    printf("Etter kø_manager \n ");
+    
     if(next_floor!=-1){
         go_to_floor(next_floor, current_kø);
-        printf("Etter go to floor \n ");
     }
             
         if(elevio_stopButton()){
             elevio_motorDirection(DIRN_STOP);
-            
             break;
         }
 
