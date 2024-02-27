@@ -174,7 +174,7 @@ void open_door(int kø[]){
     }else{
         elevio_doorOpenLamp(1);
         int i = 0;
-        for(int i = 0; i < 200; i++){
+        for(int i = 0; i < 100; i++){
         kø_add_if_pressed(kø);
         usleep(10000);
         }
@@ -224,15 +224,42 @@ void kø_add_if_pressed(int kø[]){
     
     if(elevio_callButton(0, 0) || elevio_callButton(0, 1) || elevio_callButton(0, 2)){
         kø[0]=1;
-    }
+
+        if(elevio_callButton(0, 0)){
+            elevio_buttonLamp(0, 0, 1);
+        }else if(elevio_callButton(0, 1)){
+            elevio_buttonLamp(0, 1, 1);
+        }else{
+            elevio_buttonLamp(0, 2, 1);}
+        }
     if(elevio_callButton(1, 0) || elevio_callButton(1, 1) || elevio_callButton(1, 2)){
         kø[1]=1;
+        if(elevio_callButton(1, 0)){
+            elevio_buttonLamp(1, 0, 1);
+        }else if(elevio_callButton(1, 1)){
+            elevio_buttonLamp(1, 1, 1);
+        }else{
+            elevio_buttonLamp(1, 2, 1);}
+        
     }
     if(elevio_callButton(2, 0) || elevio_callButton(2, 1) || elevio_callButton(2, 2)){
         kø[2]=1;
+
+        if(elevio_callButton(2, 0)){
+            elevio_buttonLamp(2, 0, 1);
+        }else if(elevio_callButton(2, 1)){
+            elevio_buttonLamp(2, 1, 1);
+        }else{
+            elevio_buttonLamp(2, 2, 1);}
     }
     if(elevio_callButton(3, 0) || elevio_callButton(3, 1) || elevio_callButton(3, 2)){
         kø[3]=1;
+        if(elevio_callButton(3, 0)){
+            elevio_buttonLamp(3, 0, 1);
+        }else if(elevio_callButton(3, 1)){
+            elevio_buttonLamp(3, 1, 1);
+        }else{
+            elevio_buttonLamp(3, 2, 1);}
     }
 }
 int kø_manager(int kø[]){
@@ -246,4 +273,21 @@ int kø_manager(int kø[]){
 }
 void kø_del_when_completed(int floor ,int kø[]){
     kø[floor]=0;
+    if(floor == 0){
+        elevio_buttonLamp(0, 0, 0);
+        elevio_buttonLamp(0, 1, 0);
+        elevio_buttonLamp(0, 2, 0);
+    }else if(floor == 1){
+        elevio_buttonLamp(1, 0, 0);
+        elevio_buttonLamp(1, 1, 0);
+        elevio_buttonLamp(1, 2, 0);
+    }else if(floor == 2){
+        elevio_buttonLamp(2, 0, 0);
+        elevio_buttonLamp(2, 1, 0);
+        elevio_buttonLamp(2, 2, 0);
+    }else{
+        elevio_buttonLamp(3, 0, 0);
+        elevio_buttonLamp(3, 1, 0);
+        elevio_buttonLamp(3, 2, 0);
+    }
 }
