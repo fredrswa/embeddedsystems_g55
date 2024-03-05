@@ -131,40 +131,65 @@ int elevio_obstruction(void){
 
 //Created for project
 
-int go_to_floor(int new_floor, int kø[]) 
+int go_to_floor(int new_floor, int kø[], int stop, int c_f2, int m_d)
 {   
     int current_floor = elevio_floorSensor();
     int super_stop = 0;
     int floor_mem = 0;
     int motor_dir = 0;
-    int if_stop = 0;
+    int if_stop = stop;
     int current_floor1 = -1;
+    if(current_floor>new_floor){
+        motor_dir = -1;
+    }else{motor_dir = 1;}
+
     while(1){
         if (elevio_stopButton())
         {
-            return 1;
+            return 1, motor_dir, current_floor;
         }
-        if(!if_stop){int current_floor1 = elevio_floorSensor();
+        if(!if_stop){
+            current_floor1 = elevio_floorSensor();
         }
-        if(current_floor1 != -1){
+
+
+
+        if(current_floor1 != -1 && !if_stop){
             floor_mem = current_floor1;
             current_floor = current_floor1;
             elevio_floorIndicator(current_floor);
 
         }
+        if(if_stop){
+            if(m_d = 1){
+                if(c_f2 > new_floor){
+                    current_floor = c_f2;
+                }if(c_f2 < new_floor){
+                    current_floor = c_f2;
+                }else{current_floor = c_f2+1;}
+
+            }else{
+                if(c_f2 > new_floor){
+                    current_floor = c_f2;
+                }if(c_f2 < new_floor){
+                    current_floor = c_f2;
+                }else{current_floor = c_f2-1;}
+            }
+
+        }
         if(current_floor > new_floor) {
-            motor_dir = -1;
+            
             elevio_motorDirection(DIRN_DOWN);
         }else if(current_floor < new_floor)
         {
-            motor_dir = 1;
+            
             elevio_motorDirection(DIRN_UP);
         }
         if(current_floor == new_floor) {
             elevio_motorDirection(DIRN_STOP);
         if (elevio_stopButton())
         {
-            return 1;
+            return 1, motor_dir, current_floor;
         }
             super_stop = open_door(kø);
             kø_add_if_pressed(kø);
@@ -180,12 +205,12 @@ int go_to_floor(int new_floor, int kø[])
             emergency_stop(kø);
             super_stop = 1;
             break;
-            //start_from_undefined(floor_mem, motor_dir);
+            
 
         }
         
     }
-    return super_stop;
+    return super_stop, motor_dir, current_floor;
 
 }
 

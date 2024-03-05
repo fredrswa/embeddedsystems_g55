@@ -19,6 +19,8 @@ while(1){
     startup();
     int stop =0;
     int super_stop = 0;
+    int motor_dir =0;
+    int current_floor=-1;
     
     while(1) 
     {
@@ -28,7 +30,7 @@ while(1){
         
         
         if(next_floor!=-1){
-        stop = go_to_floor(next_floor, current_kø);
+        stop, motor_dir, current_floor = go_to_floor(next_floor, current_kø, stop, motor_dir, current_floor);
         }
 
     
