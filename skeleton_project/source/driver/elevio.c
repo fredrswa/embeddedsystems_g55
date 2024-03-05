@@ -290,6 +290,7 @@ int is_kø_empty(int kø[]){
 
 void kø_add_if_pressed(int kø[]){
     
+    
     if(elevio_callButton(0, 0) || elevio_callButton(0, 1) || elevio_callButton(0, 2)){
         kø[0]=1;
 

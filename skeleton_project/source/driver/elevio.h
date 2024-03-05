@@ -48,3 +48,12 @@ void kø_del_when_completed(int floor ,int kø[]);
 int emergency_stop(int kø[]);
 //void start_from_undefined(int floor, int direction);
 
+//NEEDS CHANGES
+/*
+go_to_floor()       Stopper når queue_down stemmer med retning
+kø_manager()        Små endringer
+kø_add_if_pressed() Velger hvilken queu som oppdateres
+open_door()         Sjekker hele tiden om det legges til kø
+is_kø_empty()       Sjekker om køen er tom
+kø_del_when_completed() Sletter alle ordre når man stopper på floor
+*/
