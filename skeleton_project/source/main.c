@@ -16,6 +16,9 @@ int main(){
 while(1){
     int current_kø[4] = {0,0,0,0};
     int priority[4] = {0,0,0,0};
+    int down_kø[4]={0,0,0,0};
+    int up_kø[4]={0,0,0,0};
+    int cabin_kø[4]={0,0,0,0};
     startup();
     int stop1 =0;
     int stop  =0;
@@ -27,13 +30,13 @@ while(1){
     
     while(1) 
     {
-        kø_add_if_pressed(current_kø);
-        int next_floor = kø_manager(current_kø, priority);
+        kø_add_if_pressed(current_kø, down_kø, up_kø, cabin_kø);
+        int next_floor = kø_manager(current_kø, priority, down_kø, up_kø, cabin_kø);
     
         
         
         if(next_floor!=-1){
-        stop = go_to_floor(next_floor, current_kø, &stop1, &current_fl, &motor_d);
+        stop = go_to_floor(next_floor, current_kø, &stop1, &current_fl, &motor_d, down_kø, up_kø, cabin_kø);
         stop1 = stop;
         printf("Stop: %d\n", stop1);
         printf("Direction: %d\n", motor_d);
@@ -45,7 +48,7 @@ while(1){
 
         if(elevio_stopButton())// || stop)
         {
-            super_stop = emergency_stop(current_kø);
+            super_stop = emergency_stop(current_kø, down_kø, up_kø, cabin_kø);
             stop = 0;
         }
 

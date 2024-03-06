@@ -37,22 +37,21 @@ int elevio_obstruction(void);
 
 //Created for project
 
-int go_to_floor(int new_floor, int kø[], int *stop, int *c_f2, int *m_d);
-int kø_manager(int kø[], int pri[]);
-void kø_add_if_pressed(int kø[]);
-int open_door(int kø[]);
+int go_to_floor(int new_floor, int kø[], int *stop, int *c_f2, int *m_d, int down_kø[], int up_kø[], int cabin_kø[]);
+int kø_manager(int kø[], int pri[], int down_kø[], int up_kø[], int cabin_kø[]);
+void kø_add_if_pressed(int kø[], int down_kø[], int up_kø[], int cabin_kø[]);
+int open_door(int kø[], int down_kø[], int up_kø[], int cabin_kø[]);
 int between_floors();
 void startup();
 int is_kø_empty(int kø[]); 
-void kø_del_when_completed(int floor ,int kø[]);
-int emergency_stop(int kø[]);
+void kø_del_when_completed(int floor ,int kø[], int down_kø[], int up_kø[], int cabin_kø[]);
+int emergency_stop(int kø[], int down_kø[], int up_kø[], int cabin_kø[]);
 //void start_from_undefined(int floor, int direction);
 
 //NEEDS CHANGES
 /*
 go_to_floor()       Stopper når queue_down stemmer med retning
 kø_manager()        Små endringer
-kø_add_if_pressed() Velger hvilken queu som oppdateres
 open_door()         Sjekker hele tiden om det legges til kø
 is_kø_empty()       Sjekker om køen er tom
 kø_del_when_completed() Sletter alle ordre når man stopper på floor

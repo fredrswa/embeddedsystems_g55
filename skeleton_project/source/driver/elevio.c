@@ -131,12 +131,12 @@ int elevio_obstruction(void){
 
 //Created for project
 
-int go_to_floor(int new_floor, int kø[], int *stop, int *c_f2, int *m_d)
+int go_to_floor(int new_floor, int kø[], int *stop, int *c_f2, int *m_d, int down_kø[], int up_kø[], int cabin_kø[])
 {   
     int current_floor = elevio_floorSensor();
     int super_stop = 0;
     int floor_mem = 0;
-    int motor_dir = 0;
+    //int motor_dir = 0;
     int current_floor1 = -1;
     
     while(1){
@@ -176,6 +176,48 @@ int go_to_floor(int new_floor, int kø[], int *stop, int *c_f2, int *m_d)
         *c_f2 = current_floor;
         *stop = 0;
 
+        //Implementasjon for å stoppe underveis hvis noen har trykket riktig reting imellom etager.
+        if((current_floor1 != -1) && (current_floor != new_floor)){
+        if(*m_d==-1){
+            for(int i = 0; i < 4; i++){
+                kø_add_if_pressed(kø, down_kø, up_kø, cabin_kø); 
+                if(down_kø[i]==1 || cabin_kø[i]==1){
+                    if(current_floor==i){
+                        elevio_motorDirection(DIRN_STOP);
+                        if (elevio_stopButton())
+                            {
+                                *stop = 1;
+                                return 1;
+                            }
+                        super_stop = open_door(kø, down_kø, up_kø, cabin_kø);
+                        kø_add_if_pressed(kø, down_kø, up_kø, cabin_kø);
+                        kø_del_when_completed(current_floor,kø, down_kø, up_kø, cabin_kø);
+                        break;
+                    }
+                }
+            }
+        }else if(*m_d==1){
+            for(int i = 0; i < 4; i++){
+                kø_add_if_pressed(kø, down_kø, up_kø, cabin_kø);
+                if(up_kø[i]==1 || cabin_kø[i]==1){
+                    if(current_floor==i){
+                        elevio_motorDirection(DIRN_STOP);
+                        if (elevio_stopButton())
+                            {
+                                *stop = 1;
+                                return 1;
+                            }
+                        super_stop = open_door(kø, down_kø, up_kø, cabin_kø);
+                        kø_add_if_pressed(kø, down_kø, up_kø, cabin_kø);
+                        kø_del_when_completed(current_floor,kø, down_kø, up_kø, cabin_kø);
+                        break;
+                    }
+                }
+            }
+        }
+        }
+        //Implementasjon slutt.
+
 
         if(current_floor > new_floor) {
             elevio_motorDirection(DIRN_DOWN);
@@ -192,18 +234,18 @@ int go_to_floor(int new_floor, int kø[], int *stop, int *c_f2, int *m_d)
             *stop = 1;
             return 1;
         }
-            super_stop = open_door(kø);
-            kø_add_if_pressed(kø);
-            kø_del_when_completed(new_floor,kø);
+            super_stop = open_door(kø, down_kø, up_kø, cabin_kø);
+            kø_add_if_pressed(kø, down_kø, up_kø, cabin_kø);
+            kø_del_when_completed(new_floor,kø, down_kø, up_kø, cabin_kø);
             return super_stop;
 
         }
-        kø_add_if_pressed(kø);
+        kø_add_if_pressed(kø, down_kø, up_kø, cabin_kø);
         
 
 
         if(elevio_stopButton()){
-            emergency_stop(kø);
+            emergency_stop(kø, down_kø, up_kø, cabin_kø);
             super_stop = 1;
             *stop  =1;
             return super_stop;
@@ -217,7 +259,7 @@ int go_to_floor(int new_floor, int kø[], int *stop, int *c_f2, int *m_d)
 
 }
 
-int open_door(int kø[]){
+int open_door(int kø[], int down_kø[], int up_kø[], int cabin_kø[]){
     if (elevio_stopButton()) {
         return 1;
     }
@@ -227,7 +269,7 @@ int open_door(int kø[]){
         elevio_doorOpenLamp(1);
         int i = 0;
         for(int i = 0; i < 200; i++){
-        kø_add_if_pressed(kø);
+        kø_add_if_pressed(kø, down_kø, up_kø, cabin_kø);
         if (elevio_stopButton()) {
             return 1;
         }
@@ -236,7 +278,7 @@ int open_door(int kø[]){
         if(elevio_obstruction()){
         while(elevio_obstruction()){
             for(int i = 0; i < 50; i++){
-        kø_add_if_pressed(kø);
+        kø_add_if_pressed(kø, down_kø, up_kø, cabin_kø);
         if (elevio_stopButton()) {
             return 1;
         }
@@ -245,7 +287,7 @@ int open_door(int kø[]){
 
         }
         for(int i = 0; i < 200; i++){
-        kø_add_if_pressed(kø);
+        kø_add_if_pressed(kø, down_kø, up_kø, cabin_kø);
         if (elevio_stopButton()) {
             return 1;
         }
@@ -288,7 +330,7 @@ int is_kø_empty(int kø[]){
     return 1;
 }
 
-void kø_add_if_pressed(int kø[]){
+void kø_add_if_pressed(int kø[], int down_kø[], int up_kø[], int cabin_kø[]){
     
     
     if(elevio_callButton(0, 0) || elevio_callButton(0, 1) || elevio_callButton(0, 2)){
@@ -296,19 +338,25 @@ void kø_add_if_pressed(int kø[]){
 
         if(elevio_callButton(0, 0)){
             elevio_buttonLamp(0, 0, 1);
+            up_kø[0]=1;
         }else if(elevio_callButton(0, 1)){
             elevio_buttonLamp(0, 1, 1);
-        }else{
-            elevio_buttonLamp(0, 2, 1);}
+            down_kø[0]=1;
+        }else if(elevio_callButton(0, 2)){
+            elevio_buttonLamp(0, 2, 1);
+            cabin_kø[0]=1;}
         }
     if(elevio_callButton(1, 0) || elevio_callButton(1, 1) || elevio_callButton(1, 2)){
         kø[1]=1;
         if(elevio_callButton(1, 0)){
             elevio_buttonLamp(1, 0, 1);
+            up_kø[1]=1;
         }else if(elevio_callButton(1, 1)){
             elevio_buttonLamp(1, 1, 1);
-        }else{
-            elevio_buttonLamp(1, 2, 1);}
+            down_kø[1]=1;
+        }else if(elevio_callButton(1, 2)){
+            elevio_buttonLamp(1, 2, 1);
+            cabin_kø[1]=1;}
         
     }
     if(elevio_callButton(2, 0) || elevio_callButton(2, 1) || elevio_callButton(2, 2)){
@@ -316,26 +364,32 @@ void kø_add_if_pressed(int kø[]){
 
         if(elevio_callButton(2, 0)){
             elevio_buttonLamp(2, 0, 1);
+            up_kø[2]=1;
         }else if(elevio_callButton(2, 1)){
             elevio_buttonLamp(2, 1, 1);
-        }else{
-            elevio_buttonLamp(2, 2, 1);}
+            down_kø[2]=1;
+        }else if(elevio_callButton(2, 2)){
+            elevio_buttonLamp(2, 2, 1);
+            cabin_kø[2]=1;}
     }
     if(elevio_callButton(3, 0) || elevio_callButton(3, 1) || elevio_callButton(3, 2)){
         kø[3]=1;
         if(elevio_callButton(3, 0)){
             elevio_buttonLamp(3, 0, 1);
+            up_kø[3]=1;
         }else if(elevio_callButton(3, 1)){
             elevio_buttonLamp(3, 1, 1);
-        }else{
-            elevio_buttonLamp(3, 2, 1);}
+            down_kø[3]=1;
+        }else if(elevio_callButton(3, 2)){
+            elevio_buttonLamp(3, 2, 1);
+            cabin_kø[3]=1;}
     }
 }
-int kø_manager(int kø[], int pri[]){
+int kø_manager(int kø[], int pri[], int down_kø[], int up_kø[], int cabin_kø[]){
     int call = 0;
     int b = 0;
     for(int i = 0; i < 4; i++){
-        kø_add_if_pressed(kø);
+        kø_add_if_pressed(kø, down_kø, up_kø, cabin_kø);
         b+=kø[i];
         if((kø[i] &&  pri[i] > pri[call])){
             call = i;
@@ -355,8 +409,11 @@ int kø_manager(int kø[], int pri[]){
     }
     return call;
 }
-void kø_del_when_completed(int floor ,int kø[]){
+void kø_del_when_completed(int floor ,int kø[], int down_kø[], int up_kø[], int cabin_kø[]){
     kø[floor]=0;
+    down_kø[floor]=0;
+    up_kø[floor]=0;
+    cabin_kø[floor]=0;
     if(floor == 0){
         elevio_buttonLamp(0, 0, 0);
         elevio_buttonLamp(0, 1, 0);
@@ -375,7 +432,7 @@ void kø_del_when_completed(int floor ,int kø[]){
         elevio_buttonLamp(3, 2, 0);
     }
 }
-int emergency_stop(int kø[]) {
+int emergency_stop(int kø[], int down_kø[], int up_kø[], int cabin_kø[]) {
     printf("Emergency Stop\n");
     elevio_motorDirection(DIRN_STOP);
     elevio_stopLamp(1);
@@ -423,7 +480,7 @@ int emergency_stop(int kø[]) {
         elevio_doorOpenLamp(0);
     }
     for (int floor = 0; floor < 4; floor++) {
-        kø_del_when_completed(floor, kø);
+        kø_del_when_completed(floor, kø, down_kø, up_kø, cabin_kø);
     }
     
     return super_stop;
