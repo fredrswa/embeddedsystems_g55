@@ -1,0 +1,6 @@
+var searchData=
+[
+  ['queue_5fadd_5fif_5fpressed_0',['queue_add_if_pressed',['../elev__operatorscript_8c.html#a7561a1105f62ede66a81c96a48f7b71c',1,'queue_add_if_pressed(int queue[], int down_queue[], int up_queue[], int cabin_queue[]):&#160;elev_operatorscript.c'],['../elev__operatorscript_8h.html#a7561a1105f62ede66a81c96a48f7b71c',1,'queue_add_if_pressed(int queue[], int down_queue[], int up_queue[], int cabin_queue[]):&#160;elev_operatorscript.c']]],
+  ['queue_5fdel_5fwhen_5fcompleted_1',['queue_del_when_completed',['../elev__operatorscript_8c.html#acac0c08ddb660a4c6c642d6e311d6dec',1,'queue_del_when_completed(int floor, int queue[], int down_queue[], int up_queue[], int cabin_queue[]):&#160;elev_operatorscript.c'],['../elev__operatorscript_8h.html#acac0c08ddb660a4c6c642d6e311d6dec',1,'queue_del_when_completed(int floor, int queue[], int down_queue[], int up_queue[], int cabin_queue[]):&#160;elev_operatorscript.c']]],
+  ['queue_5fmanager_2',['queue_manager',['../elev__operatorscript_8c.html#a723888062d8e7d6d38db63b218b77165',1,'queue_manager(int queue[], int pri[], int down_queue[], int up_queue[], int cabin_queue[]):&#160;elev_operatorscript.c'],['../elev__operatorscript_8h.html#a723888062d8e7d6d38db63b218b77165',1,'queue_manager(int queue[], int pri[], int down_queue[], int up_queue[], int cabin_queue[]):&#160;elev_operatorscript.c']]]
+];
