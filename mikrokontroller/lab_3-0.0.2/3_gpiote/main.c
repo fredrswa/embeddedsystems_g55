@@ -13,6 +13,8 @@
 
 void init();
 
+
+
 int main() {
     for(int i = 17; i <= 20; i++) {
         GPIO->DIRSET = (1 << i);
@@ -25,9 +27,10 @@ int main() {
      * Configure ch 3 to toggle LED 3 on event from ch 0
      * Configure ch 4 to toggle LED 4 on event from ch 0
     */
-
+   
     //BTN_A
-    GPIOTE->CONFIG[0] |= (1 << 0)|(BTN_A << 8)|(2 << 16);
+    GPIO->PIN_CNF[BTN_A] = (3 << 2)|(0 < 1);
+    GPIOTE->CONFIG[0] = (1 << 0)|(BTN_A << 8)|(2 << 16);
 
     //LED_1 to LED_4
     GPIOTE->CONFIG[1] = (3 << 0)|(LED_1 << 8)|(3 << 16)|(1 << 20);
@@ -45,18 +48,17 @@ int main() {
     PPI->PPI_CH[3].EEP = (uint32_t)&(GPIOTE->EVENTS_IN[0]);
     PPI->PPI_CH[3].TEP = (uint32_t)&(GPIOTE->TASKS_OUT[4]);
 
-    for(int i = 0; i < 4; i++) {
-        PPI->CHENSET = (1 << i);
-    }
 
+   PPI->CHEN = 0b111;
+   //PPI->CHENSET = 0b111;
+   PPI->CHENSET = (1 << 0)|(1 << 1)|(1 << 2)|(1 << 3);
+    
 
 
 
     while(1);
     return 0;
 }
-
-
 
 
 void init() {
