@@ -52,7 +52,8 @@ erase: $(BUILD_DIR)
 	nrfjprog -f $(FAMILY) --eraseall
 
 clean: $(BUILD_DIR)
-	$(QUIET) rm $(BUILD_DIR)/main.{elf,hex}
+	$(QUIET) rm $(BUILD_DIR)/main.elf
+	$(QUIET) rm $(BUILD_DIR)/main.hex
 
 recover: $(BUILD_DIR)
 	nrfjprog --recover
